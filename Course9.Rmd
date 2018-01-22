@@ -1,0 +1,47 @@
+---
+title: "Course9"
+author: "Warder"
+date: "January 22, 2018"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Quake Sorter
+
+The purpose of this application is to allow users to easily filter historical quake data by the depth at which it was recorded. This helps provided a simple visual cue as to how that compares to the magnitude of said quakes.
+
+## Source Code
+Please find
+
+- server.R here: https://github.com/NickWarder/ReproduciblePitch
+
+- ui.R here: https://github.com/NickWarder/ReproduciblePitch
+
+- The application here: https://nickwarder.shinyapps.io/Week4/
+
+## Usage and Logic
+Simply slide the bar to the right to increase the depth of quake the line shows at, and to the left to decrease the depth.
+The depth bar is dynamic based on the max and min in the data used, as is shown in the core UI code below:
+```{r echo=TRUE, eval=FALSE}
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("depth", "Depth of Quake:", min = min(quakes$depth) , max = max(quakes$depth), value = min(quakes$depth))
+    ),
+  mainPanel(plotOutput("depth")),
+))
+```
+As for the output, we use a simple boxplut that related the depth to magnitude as is seen in the server code below:
+```{r echo=TRUE, eval=FALSE}
+output$depth <- renderPlot({
+    boxplot(quakes$depth~quakes$mag,data=quakes,main="Quake Data", xlab="Quake Magnitude", ylab="Quake Depth")
+    abline(h = input$depth, col = "red")
+  })
+}
+```
+
+## Data Source
+The data used in this application is the base Quake data available in R. This data captures seismec data from 1000 events in Fiji since 1964. You can read more about the data structure and see an example of how to use this data at the following location: https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/quakes.html
